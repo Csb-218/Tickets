@@ -1,6 +1,7 @@
 
 'use client'
 import { use, useState } from 'react';
+
 import type { VariantProps } from 'class-variance-authority';
 import type { Task } from '@/types';
 import { TableOfContents } from 'lucide-react';
@@ -9,19 +10,9 @@ import TaskCard from '@/components/custom/taskCard';
 import AddTaskForm from '@/components/custom/addTaskForm';
 import { Button } from '@/components/ui/button';
 
-const Project = ({
-    params,
-}: {
-    params: Promise<{ id: string }>
-}) => {
-    const { id } = use(params)
-    const [taskform, setTaskForm] = useState<number | null>(null)
+ type BadgeVariant = VariantProps<typeof Badge>['variant'];
 
-
-    // Define a type for the badge variant to ensure type safety
-    type BadgeVariant = VariantProps<typeof Badge>['variant'];
-
-    interface Section {
+ interface Section {
         title: string;
         variant?: BadgeVariant;
         badgeText?: string;
@@ -30,7 +21,12 @@ const Project = ({
     }
 
 
-    const sections: Section[] = [
+const Project = ({
+    params,
+}: {
+    params: Promise<{ id: string }>
+}) => {
+    const [sections,setSection] = useState<Section[]>([
         {
             title: 'Proposed',
             variant: 'secondary' as BadgeVariant,
@@ -132,32 +128,33 @@ const Project = ({
             variant: 'outline' as BadgeVariant,
             badgeClassName: "bg-[#ebebeb] text-[#999999]",
             tasks: []
-        }
-    ]
+        },
+    ])
+    const { id } = use(params)
+    const [taskform, setTaskForm] = useState<number | null>(null)
 
     return (
-        <div className="container mx-auto border-[1px] rounded-sm bg-gray-50 min-h-screen">
+        <div className="container mx-auto border-[1px] rounded-sm bg-gray-50 min-h-screen  flex flex-col">
             {/* Header */}
-            <header className="flex gap-x-1 items-center py-1 px-4 bg-white border-b-[1px]">
+            <header className="flex-shrink-0 flex gap-x-1 items-center py-1 px-4 bg-white border-b-[1px]">
                 <TableOfContents size={16} />
                 <h1 className="text-lg text-gray-700"> All </h1>
 
             </header>
 
             {/* Main Body with 5 dynamic horizontal sections */}
-            <main className="flex flex-row h-full">
-                {
-                    sections.map((section, index) =>
-                        <section key={section.title} className={`${index !== (sections.length - 1) ? 'border-r border-gray-200' : ''} p-3 flex-1 bg-gray-50`}>
+            <main className="flex flex-row overflow-x-auto h-full">
+                {sections.length > 0 ? (
+
+                    sections.map((section, index) => (
+                        <section key={index} className={`${index !== (sections.length - 1) ? 'border-r border-gray-200' : ''} p-3 w-64 flex-shrink-0 bg-gray-50`}>
                             <div className="mb-2 flex flex-col gap-y-2">
                                 <div className="flex items-center justify-start gap-x-2">
                                     <Badge variant={section.variant} className={section.badgeClassName}>
                                         {section.badgeText || section.title}
                                     </Badge>
-
                                     <p className="text-sm text-stone-400 font-light">{section.tasks.length}</p>
                                 </div>
-
                                 <Button
                                     onClick={() => setTaskForm(index)}
                                     type='button'
@@ -166,7 +163,6 @@ const Project = ({
                                     className="w-fit text-stone-400 font-light">
                                     + New
                                 </Button>
-
                             </div>
                             <div className="space-y-3">
                                 {taskform === index && <AddTaskForm setTaskForm={setTaskForm} />}
@@ -175,8 +171,26 @@ const Project = ({
                                 ))}
                             </div>
                         </section>
-                    )
+                    )) 
+
+                    
+                ) : (
+                    <div className="flex-1 flex items-center justify-center p-8 text-center">
+                        <div className="flex flex-col items-center gap-y-4">
+                            <h2 className="text-xl font-semibold text-gray-600">This project is empty</h2>
+                            <p className="text-gray-500">Get started by creating a new section for your tasks.</p>
+                            <Button variant="outline"> + Create List</Button>
+                        </div>
+                    </div>
+                )}
+                {
+                    sections.length > 0 &&
+                     // empty section
+                   <section className="p-3 w-64 text-center flex-shrink-0 bg-gray-50 border-l border-gray-200">
+                     <Button variant="ghost" > + Create List</Button>
+                   </section>
                 }
+
             </main>
         </div>
     )

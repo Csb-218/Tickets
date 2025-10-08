@@ -6,15 +6,18 @@ const SubTaskCard = ({subtask}:{subtask:subTask}) => {
 
   const{isAdmin} = useAuth(state=>state);
 
+  const createdBy = "Shrishak"
+
   return (
     <li className={`
      ${(isAdmin && subtask.id % 3 === 0) && "bg-emerald-300"} 
       ${(isAdmin && subtask.id % 2 === 0) && "bg-red-300"} 
       ${(isAdmin && subtask.id % 1 === 0) && "bg-blue-300"} 
-    group relative flex items-center justify-between p-1 rounded hover:bg-gray-100/50 transition-colors duration-200`}>
+    group relative flex items-center justify-between p-1 rounded`}>
         <p className='text-sm text-gray-600 truncate pr-2'>
            • {subtask.content} 
         </p>
+        {/* tag */}
         <div className="absolute left-11/12 -bottom-5 -translate-y-1/2 z-10
             flex items-center justify-center
             h-6 bg-gray-200 text-gray-700 text-xs font-bold
@@ -23,7 +26,10 @@ const SubTaskCard = ({subtask}:{subtask:subTask}) => {
             overflow-hidden whitespace-nowrap cursor-default select-none
           "
         >
-          {subtask.content}
+          <span className="group-hover:hidden">
+            {createdBy.charAt(0).toUpperCase()}
+          </span>
+          <span className="hidden group-hover:inline"> created by {createdBy}</span>
         </div>
     </li>
   )

@@ -1,3 +1,7 @@
+"use client"
+import { Fragment, useState } from 'react'
+import { SidebarStoreProvider } from '@/providers/sidebar-store-provider'
+import { usePathname } from 'next/navigation'
 import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
@@ -14,51 +18,81 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 
-export default async function DashBoardLayout({
+import AddProjectDialog from "@/components/custom/AddProject"
+
+export default function DashBoardLayout({
   children,
-  params,
+
 }: {
   children: React.ReactNode
-  params: Promise<{ team: string }>
+
 }) {
 
-     return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator
-              orientation="vertical"
-              className="mr-2 data-[orientation=vertical]:h-4"
-            />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    Building Your Application
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-             {children}
-          {/* <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+  const app_url:string = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+  const pathname: string = usePathname()
+  const breadcrumbs: string[] = pathname.split('/')
+  
+
+  console.log(pathname,app_url)
+  return (
+    <SidebarStoreProvider>
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          <header className="flex justify-between px-4 h-16 shrink-0 items-center gap-2">
+            <div className="flex items-center gap-2 ">
+              <SidebarTrigger className="-ml-1" />
+              <Separator
+                orientation="vertical"
+                className="mr-2 data-[orientation=vertical]:h-4"
+              />
+              <Breadcrumb>
+                <BreadcrumbList>
+                  {
+                    breadcrumbs.map((breadcrumb, index) => {
+                      return (
+                        <Fragment key={index}>
+                          { 
+                            index !== breadcrumbs.length-1 &&
+                            <>
+                            <BreadcrumbItem className="hidden md:block">
+                            <BreadcrumbLink href={`${app_url}${breadcrumbs.slice(0,index+1).join('/')}`}>
+                              {breadcrumb}
+                            </BreadcrumbLink> 
+                            </BreadcrumbItem>
+                             <BreadcrumbSeparator className="hidden md:block" />
+                            </>
+                            
+                            }
+                            {
+                              index === breadcrumbs.length-1 &&
+                              <BreadcrumbItem>
+                              <BreadcrumbPage>{breadcrumb}</BreadcrumbPage>
+                            </BreadcrumbItem>
+                            }
+                        </Fragment>
+                      )
+                    })
+                  }
+                 
+                </BreadcrumbList>
+              </Breadcrumb>
+            </div>
+            {/* Add Project Dialog */}
+            <AddProjectDialog/>
+          </header>
+          <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+            {children}
+            {/* <div className="grid auto-rows-min gap-4 md:grid-cols-3">
             <div className="bg-muted/50 aspect-video rounded-xl" />
             <div className="bg-muted/50 aspect-video rounded-xl" />
             <div className="bg-muted/50 aspect-video rounded-xl" />
           </div>
           <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min" /> */}
         </div>
-        {/* {children} */}
-      </SidebarInset>
-    </SidebarProvider>
+          {/* {children} */}
+        </SidebarInset>
+      </SidebarProvider>
+    </SidebarStoreProvider>
   )
 }

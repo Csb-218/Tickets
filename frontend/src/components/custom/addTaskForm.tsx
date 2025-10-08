@@ -1,8 +1,16 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { X } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { X , PlusIcon } from "lucide-react"
 
-const AddTaskForm = ({setTaskForm}:{setTaskForm:React.Dispatch<React.SetStateAction<number|null>>}) => {
+
+
+interface addTaskFormProps {
+    setTaskForm:React.Dispatch<React.SetStateAction<number|null>>
+}
+
+
+const AddTaskForm = ({setTaskForm}:addTaskFormProps) => {
     const [title, setTitle] = useState('');
     const [subtasks, setSubtasks] = useState<string[]>([]);
     const [currentSubtask, setCurrentSubtask] = useState('');
@@ -36,16 +44,17 @@ const AddTaskForm = ({setTaskForm}:{setTaskForm:React.Dispatch<React.SetStateAct
         console.log('New Task:', newTask);
         // Here you would typically call a function to save the task to your backend or state management store.
         // e.g., addTask(newTask);
-
+    
         // Reset form
         setTitle('');
         setSubtasks([]);
         setCurrentSubtask('');
+        
     };
 
     return (
-        <div className="p-4 bg-white rounded-lg border border-gray-200 shadow-sm space-y-2">
-            <input
+        <div className="p-4 bg-white rounded-lg border border-gray-200 shadow-sm space-y-2 ">
+            <Input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -66,16 +75,17 @@ const AddTaskForm = ({setTaskForm}:{setTaskForm:React.Dispatch<React.SetStateAct
             </ul>
 
             {/* Add subtask form */}
-            <form onSubmit={handleAddSubtask} className="flex items-center space-x-2">
-                <input
+            <form onSubmit={handleAddSubtask} className="flex items-center space-x-1 ">
+                <Input
+                    size={12}
                     type="text"
                     value={currentSubtask}
                     onChange={(e) => setCurrentSubtask(e.target.value)}
                     placeholder="Add a subtask..."
-                    className="flex-grow text-sm p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="flex-1 text-sm p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
-                <Button type="submit" variant="outline" className="">
-                    Add
+                <Button type="submit" variant="outline" size={"icon-sm"} className="">
+                    <PlusIcon size={24}  />
                 </Button>
             </form>
 
@@ -83,7 +93,7 @@ const AddTaskForm = ({setTaskForm}:{setTaskForm:React.Dispatch<React.SetStateAct
                 <Button onClick={handleSaveTask} variant="secondary" size={"sm"} className="flex-1 bg-blue-500 text-white font-bold hover:bg-blue-600 ">
                     Save Task
                 </Button>
-                <Button onClick={()=>setTaskForm(null)} variant="outline" size={"icon-sm"}>
+                <Button onClick={()=>setTaskForm(null)} variant={"destructive"} size={"icon-sm"}>
                     <X size={24} />
                 </Button>
             </div>

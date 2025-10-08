@@ -134,7 +134,7 @@ const Project = ({
     const [taskform, setTaskForm] = useState<number | null>(null)
 
     return (
-        <div className="container mx-auto border-[1px] rounded-sm bg-gray-50 min-h-screen  flex flex-col">
+        <div className=" w-full mx-auto border-[1px] rounded-sm bg-gray-50 min-h-screen  flex flex-col">
             {/* Header */}
             <header className="flex-shrink-0 flex gap-x-1 items-center py-1 px-4 bg-white border-b-[1px]">
                 <TableOfContents size={16} />

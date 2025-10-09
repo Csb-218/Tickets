@@ -1,0 +1,198 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/*
+  Core models:
+  - User (use Supabase UID as id)
+  - Project -> has many Lists
+  - List -> belongs to Project, has many Tasks (e.g., "In Progress", "Deployed")
+  - Task -> belongs to List & Project, has many Subtasks
+  - Subtask -> belongs to Task
+  - ProjectMember -> membership & role
+  - Comment -> comments on Tasks
+  - Notification -> persisted notifications per user
+  - ActivityLog -> audit trail
+*/
+
+model User {
+  id            String           @id             // use Supabase UID here
+  email         String           @unique
+  name          String?
+  avatarUrl     String?
+  isSuperUser   Boolean          @default(false)
+  meta          Json?
+  lastSeen      DateTime?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  // relations
+  projects       Project[]       @relation("Owner")
+  memberships      ProjectMember[]
+  assignedSubtasks  Subtask[]      @relation("AssignedSubtasks")
+  createdTasks     Task[]          @relation("CreatedTasks")
+  assignedTasks    Task[]          @relation("AssignedTasks")
+  comments         Comment[]
+  notifications    Notification[]
+  activityLogs     ActivityLog[] 
+}
+
+model Project {
+  id            String          @id @default(cuid())
+  name          String
+  description   String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  ownerId       String
+  owner         User            @relation(fields: [ownerId], references: [id])
+  members       ProjectMember[]
+  lists         List[]
+  tasks         Task[]
+  activityLogs  ActivityLog[]
+}
+
+model ProjectMember {
+  id        String      @id @default(cuid())
+  userId    String
+  projectId String
+  role      ProjectRole @default(MEMBER)
+  joinedAt  DateTime    @default(now())
+
+  user      User        @relation(fields: [userId], references: [id])
+  project   Project     @relation(fields: [projectId], references: [id])
+
+  @@unique([userId, projectId])
+}
+
+enum ProjectRole {
+  ADMIN
+  MEMBER
+}
+
+model List {
+  id         String    @id @default(cuid())
+  name       String
+  order      Int       // position/order of the list within the project
+  projectId  String
+
+  project    Project   @relation(fields: [projectId], references: [id])
+  tasks      Task[]
+
+  @@index([projectId, order])
+}
+
+model Task {
+  id            String        @id @default(cuid())
+  title         String
+  description   String?
+  order         Int           // position order inside the list
+  status        String
+  priority      TaskPriority  @default(MEDIUM)
+  dueDate       DateTime?
+  version       Int           @default(1) // optimistic concurrency control
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  listId        String
+  projectId     String
+  createdById   String
+  assignedToId  String?
+
+  list          List          @relation(fields: [listId], references: [id])
+  project       Project       @relation(fields: [projectId], references: [id])
+  createdBy     User          @relation("CreatedTasks", fields: [createdById], references: [id])
+  assignedTo    User?         @relation("AssignedTasks", fields: [assignedToId], references: [id])
+  comments      Comment[]
+  subtasks      Subtask[]
+ 
+
+  @@index([projectId, listId])
+  @@index([assignedToId])
+  @@index([projectId, status])
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model Subtask {
+  id          String    @id @default(cuid())
+  title       String
+  isDone      Boolean   @default(false)
+  order       Int       // ordering within the task
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  taskId      String
+  assigneeId  String?   // optional assignee for subtasks
+
+  task        Task      @relation(fields: [taskId], references: [id])
+  assignee    User?     @relation(fields: [assigneeId], references: [id])
+
+  @@index([taskId, order])
+}
+
+model Comment {
+  id         String   @id @default(cuid())
+  content    String
+  createdAt  DateTime @default(now())
+  taskId     String
+  authorId   String
+
+  task       Task     @relation(fields: [taskId], references: [id])
+  author     User     @relation(fields: [authorId], references: [id])
+
+  @@index([taskId, createdAt])
+}
+
+model Notification {
+  id         String   @id @default(cuid())
+  type       String
+  message    String
+  meta       Json?
+  isRead     Boolean  @default(false)
+  userId     String
+  createdAt  DateTime  @default(now())
+
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
+}
+
+model ActivityLog {
+  id          String   @id @default(cuid())
+  action      String
+  entityType  String
+  entityId    String
+  metadata    Json?
+  projectId   String
+  userId      String
+  createdAt   DateTime @default(now())
+
+  project     Project  @relation(fields: [projectId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
+
+  tasks       Task[]   @relation(fields: [id], references: [id])
+
+
+
+  @@index([projectId, createdAt])
+
+}

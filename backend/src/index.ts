@@ -1,21 +1,44 @@
 import express from 'express';
 import type { Express, Request, Response } from 'express';
+import cors from "cors"
 import dotenv from 'dotenv';
+import projectRouter from './routers/project';
+import taskRouter from './routers/task'
 
-// For environment variable configuration
+// Load environment variables
 dotenv.config();
 
 const app: Express = express();
-// It's good practice to use an environment variable for the port with a fallback
-const port = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3002;
 
 // A simple GET route to confirm the server is running
 app.get('/', (req: Request, res: Response) => {
   res.send('Welcome to the Express + TypeScript Server!');
 });
 
-// Start the server
-app.listen(port, () => {
-  // A console log to confirm the server is running and on which port
-  console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+// Middlewares
+app.use(express.json()); // for parsing application/json
+app.use(express.json()); // Parse JSON bodies
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
+
+// CORS configuration
+const corsOptions = {
+  origin: [
+    'http://localhost:5173',
+    'http://localhost:3000'
+  ],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  credentials: true,
+  optionsSuccessStatus: 200 // Some legacy browsers choke on 204
+};
+
+app.use(cors(corsOptions));
+
+
+// Routes
+app.use('/api/projects', projectRouter);
+app.use('/api/tasks', taskRouter);
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server is running on http://localhost:${PORT}`);
 });

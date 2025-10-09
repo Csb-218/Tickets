@@ -12,6 +12,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 /*
@@ -57,7 +58,7 @@ model Project {
   updatedAt     DateTime        @updatedAt
 
   ownerId       String
-  owner         User            @relation(fields: [ownerId], references: [id])
+  owner         User            @relation("Owner", fields: [ownerId], references: [id])
   members       ProjectMember[]
   lists         List[]
   tasks         Task[]
@@ -143,7 +144,7 @@ model Subtask {
   assigneeId  String?   // optional assignee for subtasks
 
   task        Task      @relation(fields: [taskId], references: [id])
-  assignee    User?     @relation(fields: [assigneeId], references: [id])
+  assignee    User?     @relation("AssignedSubtasks", fields: [assigneeId], references: [id])
 
   @@index([taskId, order])
 }
@@ -188,10 +189,6 @@ model ActivityLog {
 
   project     Project  @relation(fields: [projectId], references: [id])
   user        User     @relation(fields: [userId], references: [id])
-
-  tasks       Task[]   @relation(fields: [id], references: [id])
-
-
 
   @@index([projectId, createdAt])
 

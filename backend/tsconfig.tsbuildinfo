@@ -1,1 +1,1 @@
-{"root":["./src/index.ts"],"version":"5.9.3"}
+{"root":["./src/index.ts","./src/controllers/projectcontroller.ts","./src/controllers/taskcontroller.ts","./src/prisma/seed.ts","./src/prisma/generated/prisma/client.d.ts","./src/prisma/generated/prisma/default.d.ts","./src/prisma/generated/prisma/edge.d.ts","./src/prisma/generated/prisma/index.d.ts","./src/prisma/generated/prisma/wasm.d.ts","./src/prisma/generated/prisma/runtime/index-browser.d.ts","./src/prisma/generated/prisma/runtime/library.d.ts","./src/routers/project.ts","./src/routers/task.ts"],"version":"5.9.3"}

@@ -1,8 +1,10 @@
 import React from 'react'
 import {useAuth} from "@/providers/user-auth-store-provider"
-import type {subTask} from "@/types"
+import type {Subtask} from "@/types"
 
-const SubTaskCard = ({subtask}:{subtask:subTask}) => {
+
+
+const SubTaskCard = ({subtask}:{subtask:Subtask}) => {
 
   const{isAdmin} = useAuth(state=>state);
 
@@ -10,12 +12,12 @@ const SubTaskCard = ({subtask}:{subtask:subTask}) => {
 
   return (
     <li className={`
-     ${(isAdmin && subtask.id % 3 === 0) && "bg-emerald-300"} 
-      ${(isAdmin && subtask.id % 2 === 0) && "bg-red-300"} 
-      ${(isAdmin && subtask.id % 1 === 0) && "bg-blue-300"} 
+     ${(isAdmin && subtask.order % 3 === 0) && "bg-emerald-300"} 
+      ${(isAdmin && subtask.order % 2 === 0) && "bg-red-300"} 
+      ${(isAdmin && subtask.order % 1 === 0) && "bg-blue-300"} 
     group relative flex items-center justify-between p-1 rounded`}>
         <p className='text-sm text-gray-600 truncate pr-2'>
-           • {subtask.content} 
+           • {subtask.title} 
         </p>
         {/* tag */}
         <div className="absolute left-11/12 -bottom-5 -translate-y-1/2 z-10

@@ -1,6 +1,9 @@
 "use client"
 
 import * as React from "react"
+import {server} from "@/config/Axios"
+import type {NavItem} from "@/store/sidebarStore"
+import type {Project} from "@/types"
 import { useSidebar } from "@/providers/sidebar-store-provider"
 import {
   Frame,
@@ -63,7 +66,38 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const navMain = useSidebar((state) => state.navMain);
+
+  const {navMain,addProject}  = useSidebar((state) => state);
+  
+
+  React.useEffect(()=>{
+
+    //fetch projects 
+    const fetchProjects = async () =>{
+
+         const res = await server({
+          "url" : "/api/project"
+         })
+
+         console.log(res)
+
+         res.data.forEach((project:Project) =>{
+          const item:NavItem ={
+            title : project.name,
+            url : `/dashboard/team/${project.name}`,
+            description : project.description || "",
+            id : project.id
+          }
+
+          addProject(item)
+
+         });
+
+    }
+
+    fetchProjects()
+
+  },[])
 
   return (
     <Sidebar variant="inset" {...props}>
@@ -86,7 +120,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navMain} />
-        <NavProjects projects={data.projects} />
+        {/* <NavProjects projects={data.projects} /> */}
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

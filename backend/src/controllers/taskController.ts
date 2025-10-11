@@ -1,5 +1,6 @@
-import { PrismaClient } from '../prisma/generated/prisma';
+import { PrismaClient } from '../../prisma/generated/prisma';
 import type { Request, Response } from 'express';
+// import redis from '../lib/redisClient';
 
 const prisma = new PrismaClient();
 
@@ -52,6 +53,7 @@ export const createTask = async (req: Request, res: Response) => {
     });
 
     res.status(201).json(newTask);
+    // redis.lpush(newTask.id, JSON.stringify(newTask))
   } catch (error) {
     console.error('Failed to create task:', error);
     res.status(500).json({ error: 'Failed to create task.' });

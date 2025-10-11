@@ -16,9 +16,9 @@
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^4.17.21",
-    "@types/node": "^20.14.2",
+    "@types/node": "^20.19.20",
     "nodemon": "^3.1.10",
-    "prisma": "^6.17.0",
+    "prisma": "^6.17.1",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.3"
@@ -28,9 +28,10 @@
     "@prisma/extension-accelerate": "^2.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "ioredis": "^5.8.1"
   },
   "prisma": {
-    "seed": "node --loader ts-node/esm src/prisma/seed.ts"
+    "seed": "ts-node prisma/seed.ts"
   }
 }

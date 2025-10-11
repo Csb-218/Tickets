@@ -4,6 +4,8 @@ import cors from "cors"
 import dotenv from 'dotenv';
 import projectRouter from './routers/project';
 import taskRouter from './routers/task'
+import listRouter from './routers/list'
+
 
 // Load environment variables
 dotenv.config();
@@ -36,8 +38,9 @@ app.use(cors(corsOptions));
 
 
 // Routes
-app.use('/api/projects', projectRouter);
-app.use('/api/tasks', taskRouter);
+app.use('/api/project', projectRouter);
+app.use('/api/task', taskRouter);
+app.use('/api/list', listRouter);
 
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on http://localhost:${PORT}`);

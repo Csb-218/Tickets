@@ -1,4 +1,4 @@
-import { PrismaClient } from '../prisma/generated/prisma';
+import { PrismaClient } from '../../prisma/generated/prisma';
 import type { Request, Response } from 'express';
 
 const prisma = new PrismaClient();
@@ -103,6 +103,50 @@ export const getProjectById = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(`Failed to get project ${id}:`, error);
     res.status(500).json({ error: 'Failed to get project.' });
+  }
+};
+
+/**
+ * Fetches a single project by its ID with all its board data.
+ * This includes all lists, all tasks within those lists, and all subtasks for each task.
+ * This is a potentially heavy query and should be used for displaying a full project board.
+ */
+export const getProjectWithBoard = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const project = await prisma.project.findUnique({
+      where: { id },
+      include: {
+        owner: { select: { id: true, name: true, avatarUrl: true } },
+        members: {
+          include: { user: { select: { id: true, name: true, avatarUrl: true } } },
+        },
+        lists: {
+          orderBy: { order: 'asc' },
+          include: {
+            tasks: {
+              orderBy: { order: 'asc' },
+              include: {
+                subtasks: {
+                   orderBy: { order: 'asc' },
+                   include: {
+                    assigner : { select: { id: true, name: true, avatarUrl: true } }
+                   }
+                  },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!project) {
+      return res.status(404).json({ error: 'Project not found.' });
+    }
+    res.status(200).json(project);
+  } catch (error) {
+    console.error(`Failed to get project board for ${id}:`, error);
+    res.status(500).json({ error: 'Failed to get project board.' });
   }
 };
 

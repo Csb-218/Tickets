@@ -1,7 +1,7 @@
 "use client"
 import { Fragment, useState } from 'react'
 import { SidebarStoreProvider } from '@/providers/sidebar-store-provider'
-import { usePathname } from 'next/navigation'
+import { usePathname,useParams } from 'next/navigation'
 import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
@@ -17,8 +17,8 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-
 import AddProjectDialog from "@/components/custom/AddProject"
+import {decodeUrlString} from "@/utils"
 
 export default function DashBoardLayout({
   children,
@@ -30,10 +30,11 @@ export default function DashBoardLayout({
 
   const app_url:string = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
   const pathname: string = usePathname()
+  const params = useParams()
   const breadcrumbs: string[] = pathname.split('/')
   
 
-  console.log(pathname,app_url)
+  console.log(pathname,app_url,breadcrumbs,params)
   return (
     <SidebarStoreProvider>
       <SidebarProvider>
@@ -56,7 +57,7 @@ export default function DashBoardLayout({
                             index !== breadcrumbs.length-1 &&
                             <>
                             <BreadcrumbItem className="hidden md:block">
-                            <BreadcrumbLink href={`${app_url}${breadcrumbs.slice(0,index+1).join('/')}`}>
+                            <BreadcrumbLink href={`${app_url}${decodeUrlString(breadcrumbs.slice(0,index+1).join('/'))}`}>
                               {breadcrumb}
                             </BreadcrumbLink> 
                             </BreadcrumbItem>
@@ -67,7 +68,7 @@ export default function DashBoardLayout({
                             {
                               index === breadcrumbs.length-1 &&
                               <BreadcrumbItem>
-                              <BreadcrumbPage>{breadcrumb}</BreadcrumbPage>
+                              <BreadcrumbPage>{decodeUrlString(breadcrumb)}</BreadcrumbPage>
                             </BreadcrumbItem>
                             }
                         </Fragment>

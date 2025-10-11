@@ -3,13 +3,17 @@ import { SquareTerminal } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { devtools } from 'zustand/middleware';
 
+import type { Project } from '@/types';
+
 // Define types for better maintainability
-type NavItem = {
+export type NavItem = {
+  id: string;
   title: string;
+  description : string;
   url: string;
 };
 
-type NavMainSection = {
+export type NavMainSection = {
   title: string;
   url: string;
   icon: LucideIcon;
@@ -22,10 +26,7 @@ type SidebarState = {
 };
 
 type SidebarActions = {
-  addProject: (project: { 
-    title: string;
-    description : string;
- }) => void;
+  addProject: (project: NavItem) => void;
 };
 
 export type SidebarStore = SidebarState & SidebarActions;
@@ -38,9 +39,9 @@ const initialNavMain: NavMainSection[] = [
     icon: SquareTerminal,
     isActive: true,
     items: [
-      { title: "Source", url: "/dashboard/team/source" },
-      { title: "Manufacturer", url: "/dashboard/team/manufacturer" },
-      { title: "Distributor", url: "/dashboard/team/distributor" },
+      {  description: "", title: "Source", url: "/dashboard/team/source", id:"1234" },
+      {  description: "", title: "Manufacturer", url: "/dashboard/team/manufacturer" , id:"12345" },
+      {  description: "", title: "Distributor", url: "/dashboard/team/distributor" , id:"123456"},
     ],
   },
 ];
@@ -51,9 +52,10 @@ export const createSidebarStore = (
   return createStore<SidebarStore>()(devtools((set) => ({
     ...initState,
     addProject: (project) => set((state) => ({
+
       navMain: state.navMain.map(section => {
         if (section.title === "Team") {
-          const newProjectItem = { title: project.title, url: `/dashboard/team/${project.title.toLowerCase()}` };
+          const newProjectItem = { description: project.description , title: project.title, url: `/dashboard/team/${project.title.toLowerCase()}` , id: project.id };
           return { ...section, items: [...(section.items || []), newProjectItem] };
         }
         return section;

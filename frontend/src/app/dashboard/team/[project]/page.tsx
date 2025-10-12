@@ -1,244 +1,135 @@
-
-'use client'
-import { useSearchParams } from 'next/navigation';
-import { use, useState, useEffect } from 'react';
-import type { VariantProps } from 'class-variance-authority';
-import type { Task } from '@/types';
-import { TableOfContents } from 'lucide-react';
+"use client";
+import { useSearchParams } from "next/navigation";
+import { useState, useEffect} from "react";
+import type { VariantProps } from "class-variance-authority";
+import type { Task } from "@/types";
+import { TableOfContents } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import TaskCard from '@/components/custom/taskCard';
-import AddTaskForm from '@/components/custom/addTaskForm';
-import { Button } from '@/components/ui/button';
-import {server} from "@/config/Axios"
-import type {ProjectDetails} from "@/types"
+import { Button } from "@/components/ui/button";
+import EmptyProject   from "./components/EmptyProject"
+import SectionList from "./components/SectionList";
+import SectionListSkeleton from "./components/skeletons/SectionListSkeleton";
+import { server } from "@/config/Axios";
+import type { ProjectDetails } from "@/types";
 
+type BadgeVariant = VariantProps<typeof Badge>["variant"];
 
-
- type BadgeVariant = VariantProps<typeof Badge>['variant'];
-
- type Section =   {
-        title: string;
-        variant?: BadgeVariant;
-        badgeText?: string;
-        badgeClassName?: string;
-        tasks: Task[];
- }
-
- 
-
+type Section = {
+  title: string;
+  variant?: BadgeVariant;
+  badgeText?: string;
+  badgeClassName?: string;
+  tasks: Task[];
+};
 
 const Project = () => {
+  const list_tag_bg_1 = "bg-[#FDDBF6] text-[#702C61]";
+//   const list_tag_bg_2 = "bg-[#E9DFFF] text-[#483473]";
+//   const list_tag_bg_3 = "bg-[#CCF9FF] text-[#0E6874]";
+//   const list_tag_bg_4 = "bg-[#D0F8E9] text-[#166747]";
+//   const list_tag_bg_5 = "bg-[#ebebeb] text-[#999999]";
 
-    const list_tag_bg_1 = "bg-[#FDDBF6] text-[#702C61]"
-    const list_tag_bg_2 = "bg-[#E9DFFF] text-[#483473]"
-    const list_tag_bg_3 = "bg-[#CCF9FF] text-[#0E6874]"
-    const list_tag_bg_4 = "bg-[#D0F8E9] text-[#166747]"
-    const list_tag_bg_5 = "bg-[#ebebeb] text-[#999999]"
+  const [isLoading, setLoading] = useState<boolean>(true);
+  const [lists, setLists] = useState<Section[]>([
+    // {
+    //     title: "Todo",
+    //     variant: "secondary",
+    //     badgeText: "Todo",
+    //     badgeClassName: list_tag_bg_1,
+    //     tasks: [
+    //     ],
+    // },
+    // {
+    //     title: "In Progress",
+    //     variant: "secondary",
+    //     badgeText: "In Progress",
+    //     badgeClassName: list_tag_bg_2,
+    //     tasks: [
+    //     ],
+    // },
+    // {
+    //     title: "Todo",
+    //     variant: "secondary",
+    //     badgeText: "Todo",
+    //     badgeClassName: list_tag_bg_1,
+    //     tasks: [
+    //     ],
+    // },
+    // {
+    //     title: "In Progress",
+    //     variant: "secondary",
+    //     badgeText: "In Progress",
+    //     badgeClassName: list_tag_bg_2,
+    //     tasks: [
+    //     ],
+    // }
+  ]);
 
+  const searchParams = useSearchParams();
 
-    const [lists,setLists] = useState<Section[]>([
-        // {
-        //     title: 'Proposed',
-        //     variant: 'secondary' as BadgeVariant,
-        //     badgeClassName: "bg-[#FDDBF6] text-[#702C61]",
-        //     tasks: [
-        //         {
-        //             id: 1,
-        //             title: 'Brainstorm new feature ideas',
-        //             subtasks: [
-        //                 {
-        //                     id: 1,
-        //                     content: "Research crypto trends",
-        //                     done: false
-        //                 },
-        //                 {
-        //                     id: 2,
-        //                     content: "Research AI trends",
-        //                     done: false
-        //                 },
-        //                 {
-        //                     id: 3,
-        //                     content: "Research Quantum trends",
-        //                     done: false
-        //                 }
+  useEffect(() => {
+    const fetchProject = async () => {
+      try {
+        setLoading(true);
 
-        //             ]
+        const id = searchParams.get("id");
 
-        //         },
-        //          {
-        //             id: 2,
-        //             title: 'Brainstorm new feature ideas',
-        //             subtasks: [
-        //                 {
-        //                     id: 1,
-        //                     content: "Research crypto trends",
-        //                     done: false
-        //                 },
-        //                 {
-        //                     id: 2,
-        //                     content: "Research AI trends",
-        //                     done: false
-        //                 },
-        //                 {
-        //                     id: 3,
-        //                     content: "Research Quantum trends",
-        //                     done: false
-        //                 }
+        const res = await server({
+          url: `/api/project/${id}`,
+        });
 
-        //             ]
+        const project: ProjectDetails = res.data;
+        console.log(project);
 
-        //         }
-        //     ]
-        // },
-        // {
-        //     title: 'Todo',
-        //     variant: 'secondary' as BadgeVariant,
-        //     badgeClassName: "bg-[#E9DFFF] text-[#483473]",
-        //     tasks: [
-        //         {
-        //             id: 1,
-        //             title: 'Brainstorm new feature ideas',
-        //             subtasks: [
-        //                 {
-        //                     id: 1,
-        //                     content: "Research crypto trends",
-        //                     done: false
-        //                 },
-        //                 {
-        //                     id: 2,
-        //                     content: "Research AI trends",
-        //                     done: false
-        //                 },
-        //                 {
-        //                     id: 3,
-        //                     content: "Research Quantum trends",
-        //                     done: false
-        //                 }
+        const newlists = project.lists.map((list) => {
+          return {
+            title: list.name,
+            badgeText: list.name,
+            variant: "secondary" as BadgeVariant,
+            badgeClassName: list_tag_bg_1,
+            tasks: list.tasks,
+          };
+        });
+        setLists(() => [...newlists]);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-        //             ]
-
-        //         }
-        //     ]
-        // },
-        // {
-        //     title: 'Inprogress',
-        //     badgeText: 'In progress',
-        //     variant: 'secondary' as BadgeVariant,
-        //     badgeClassName: "bg-[#CCF9FF] text-[#0E6874]",
-        //     tasks: []
-        // },
-        // {
-        //     title: 'Done',
-        //     variant: 'secondary' as BadgeVariant,
-        //     badgeClassName: "bg-[#D0F8E9] text-[#166747]",
-        //     tasks: []
-        // },
-        // {
-        //     title: 'Deployed',
-        //     variant: 'outline' as BadgeVariant,
-        //     badgeClassName: "bg-[#ebebeb] text-[#999999]",
-        //     tasks: []
-        // },
-    ])
-    // const { id } = use(params)
-    const searchParams = useSearchParams()
-    const [taskform, setTaskForm] = useState<number | null>(null)
-
-    useEffect(()=>{
-
-        const fetchProject = async () =>{
-            
-             const id = searchParams.get('id')
-             
-             const res = await server({
-                "url":`/api/project/${id}`
-             })
-
-             const project:ProjectDetails = res.data
-             console.log(project)
-
-             const lists = project.lists.map(list => {
-                return {
-                    title: list.name,
-                    badgeText: list.name,
-                    variant : 'secondary' as BadgeVariant,
-                    badgeClassName: list_tag_bg_1,
-                    tasks: list.tasks
-                }
-             })
-             setLists(lists)
-            
-        }
-
-        fetchProject()
+    fetchProject();
+  }, []);
 
 
-    },[])
+  return (
+    <div className="w-full mx-auto border-[1px] rounded-sm bg-gray-50 min-h-screen flex flex-col">
+      <header className="flex-shrink-0 flex gap-x-1 items-center py-1 px-4 bg-white border-b-[1px]">
+        <TableOfContents size={16} />
+        <h1 className="text-lg text-gray-700"> All </h1>
+      </header>
 
-
-
-
-    return (
-        <div className=" w-full mx-auto border-[1px] rounded-sm bg-gray-50 min-h-screen  flex flex-col">
-            {/* Header */}
-            <header className="flex-shrink-0 flex gap-x-1 items-center py-1 px-4 bg-white border-b-[1px]">
-                <TableOfContents size={16} />
-                <h1 className="text-lg text-gray-700"> All </h1>
-
-            </header>
-
-            {/* Main Body with 5 dynamic horizontal lists */}
-            <main className="flex flex-row overflow-x-auto h-full">
-                {lists.length > 0 ? (
-
-                    lists.map((section, index) => (
-                        <section key={index} className={`${index !== (lists.length - 1) ? 'border-r border-gray-200' : ''} p-3 w-64 flex-shrink-0 bg-gray-50`}>
-                            <div className="mb-2 flex flex-col gap-y-2">
-                                <div className="flex items-center justify-start gap-x-2">
-                                    <Badge variant={section.variant} className={section.badgeClassName}>
-                                        {section.badgeText || section.title}
-                                    </Badge>
-                                    <p className="text-sm text-stone-400 font-light">{section.tasks.length}</p>
-                                </div>
-                                <Button
-                                    onClick={() => setTaskForm(index)}
-                                    type='button'
-                                    variant="ghost"
-                                    size={"sm"}
-                                    className="w-fit text-stone-400 font-light">
-                                    + New
-                                </Button>
-                            </div>
-                            <div className="space-y-3">
-                                {taskform === index && <AddTaskForm setTaskForm={setTaskForm} />}
-                                {section.tasks.map(task => (
-                                    <TaskCard key={task.id} task={task} />
-                                ))}
-                            </div>
-                        </section>
-                    )) 
-
-                    
-                ) : (
-                    <div className="flex-1 flex items-center justify-center p-8 text-center">
-                        <div className="flex flex-col items-center gap-y-4">
-                            <h2 className="text-xl font-semibold text-gray-600">This project is empty</h2>
-                            <p className="text-gray-500">Get started by creating a new section for your tasks.</p>
-                            <Button variant="outline"> + Create List</Button>
-                        </div>
-                    </div>
-                )}
-                {
-                    lists.length > 0 &&
-                     // empty section
-                   <section className="p-3 w-64 text-center flex-shrink-0 bg-gray-50 border-l border-gray-200">
-                     <Button variant="ghost" > + Create List</Button>
-                   </section>
-                }
-
-            </main>
-        </div>
-    )
-}
+      <main className="flex flex-row overflow-x-auto h-full">
+          {/* <SectionListSkeleton /> */}
+        {isLoading ? (
+          <SectionListSkeleton />
+        ) : lists.length > 0 ? (
+          <>
+            {lists.map((section, index) => 
+            <SectionList key={index} section={section} index={index} lists={lists} />
+            )}
+            {
+              <section className="p-3 w-64 text-center flex-shrink-0 bg-gray-50 border-l border-gray-200">
+                <Button variant="ghost"> + Create List</Button>
+              </section>
+            }
+          </>
+        ) : (
+          <EmptyProject/>
+        )}
+      </main>
+    </div>
+  );
+};
 
 export default Project;

@@ -71,4 +71,8 @@ export interface Subtask {
     updatedAt: string;
     taskId: string;
     assigneeId: string | null;
+    assignerId: string | null;
+    assigner: User | null
+    assignee: User | null
+
 }

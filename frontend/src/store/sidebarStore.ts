@@ -3,11 +3,11 @@ import { SquareTerminal } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { devtools } from 'zustand/middleware';
 
-import type { Project } from '@/types';
+// import type { Project } from '@/types';
 
 // Define types for better maintainability
 export type NavItem = {
-  id: string;
+  id?: string;
   title: string;
   description : string;
   url: string;

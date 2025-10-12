@@ -17,8 +17,8 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import AddProjectDialog from "@/components/custom/AddProject"
-import {decodeUrlString} from "@/utils"
+import AddProjectDialog from "@/app/dashboard/team/[project]/components/AddProject"
+import {decodeUrlString} from "@/lib/utils"
 
 export default function DashBoardLayout({
   children,

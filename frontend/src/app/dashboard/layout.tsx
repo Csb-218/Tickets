@@ -1,6 +1,5 @@
 "use client"
-import { Fragment, useState } from 'react'
-import { SidebarStoreProvider } from '@/providers/sidebar-store-provider'
+import { Fragment } from 'react'
 import { usePathname,useParams } from 'next/navigation'
 import { AppSidebar } from "@/components/app-sidebar"
 import {
@@ -36,7 +35,6 @@ export default function DashBoardLayout({
 
   console.log(pathname,app_url,breadcrumbs,params)
   return (
-    <SidebarStoreProvider>
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset>
@@ -94,6 +92,5 @@ export default function DashBoardLayout({
           {/* {children} */}
         </SidebarInset>
       </SidebarProvider>
-    </SidebarStoreProvider>
   )
 }

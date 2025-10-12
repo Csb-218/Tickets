@@ -23,7 +23,7 @@ export default function AddProjectDialog(){
   const [projectName, setProjectName] = useState<string>('');
   const [projectDescription, setProjectDescription] = useState<string>('');
 
-  const {addProject,navMain} = useSidebar(state=>state)
+  const {addProject} = useSidebar(state=>state)
   
 
   const handleCreateProject = async() => {
@@ -31,9 +31,9 @@ export default function AddProjectDialog(){
         console.log('Creating project:', { name: projectName, description: projectDescription });
         SetCreating(true)
         await new Promise(resolve => setTimeout(resolve, 3000));
-        addProject({title:projectName , description:projectDescription})
-    }catch(error){
-
+        addProject({title:projectName , description:projectDescription , url:''})
+    }catch(error:unknown){
+        console.error('Error creating project:', error);
     }finally{
         setProjectName('');
         setProjectDescription('');
@@ -53,7 +53,7 @@ export default function AddProjectDialog(){
               <DialogHeader>
                 <DialogTitle>Create New Project</DialogTitle>
                 <DialogDescription>
-                  Enter the name and description for your new project. Click create when you're done.
+                  Enter the name and description for your new project. Click create when you&apos;re done.
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">

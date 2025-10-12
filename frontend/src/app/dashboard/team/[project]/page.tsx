@@ -22,12 +22,20 @@ type Section = {
   tasks: Task[];
 };
 
+const badgeColors = [
+    "bg-[#FDDBF6] text-[#702C61]",
+    "bg-[#E9DFFF] text-[#483473]",
+    "bg-[#CCF9FF] text-[#0E6874]",
+    "bg-[#D0F8E9] text-[#166747]",
+    "bg-[#ebebeb] text-[#999999]",
+  ];
+
+  const getRandomBadgeColor = () => {
+    return badgeColors[Math.floor(Math.random() * badgeColors.length)];
+  };
 const Project = () => {
-  const list_tag_bg_1 = "bg-[#FDDBF6] text-[#702C61]";
-//   const list_tag_bg_2 = "bg-[#E9DFFF] text-[#483473]";
-//   const list_tag_bg_3 = "bg-[#CCF9FF] text-[#0E6874]";
-//   const list_tag_bg_4 = "bg-[#D0F8E9] text-[#166747]";
-//   const list_tag_bg_5 = "bg-[#ebebeb] text-[#999999]";
+  
+
 
   const [isLoading, setLoading] = useState<boolean>(true);
   const [lists, setLists] = useState<Section[]>([
@@ -86,7 +94,7 @@ const Project = () => {
             title: list.name,
             badgeText: list.name,
             variant: "secondary" as BadgeVariant,
-            badgeClassName: list_tag_bg_1,
+            badgeClassName: getRandomBadgeColor(),
             tasks: list.tasks,
           };
         });
@@ -99,7 +107,8 @@ const Project = () => {
     };
 
     fetchProject();
-  }, []);
+
+  }, [searchParams]);
 
 
   return (

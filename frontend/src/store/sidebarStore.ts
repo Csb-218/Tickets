@@ -1,7 +1,6 @@
-import { createStore } from 'zustand';
+import type { StateCreator } from 'zustand';
 import { SquareTerminal } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { devtools } from 'zustand/middleware';
 
 // import type { Project } from '@/types';
 
@@ -46,20 +45,17 @@ const initialNavMain: NavMainSection[] = [
   },
 ];
 
-export const createSidebarStore = (
-  initState: SidebarState = { navMain: initialNavMain }
-) => {
-  return createStore<SidebarStore>()(devtools((set) => ({
-    ...initState,
-    addProject: (project) => set((state) => ({
-
-      navMain: state.navMain.map(section => {
-        if (section.title === "Team") {
-          const newProjectItem = { description: project.description , title: project.title, url: `/dashboard/team/${project.title.toLowerCase()}` , id: project.id };
-          return { ...section, items: [...(section.items || []), newProjectItem] };
-        }
-        return section;
-      })
-    })),
-  })));
-}
+export const createSidebarSlice: StateCreator<SidebarStore, [], [], SidebarStore> = (set) => ({
+  navMain: initialNavMain,
+  addProject: (project) => set((state) => ({
+    navMain: state.navMain.map(section => {
+      if (section.title === "Team") {
+        const newProjectItem = { description: project.description, title: project.title, url: `/dashboard/team/${project.title.toLowerCase()}`, id: project.id };
+        // Avoid duplicates
+        if (section.items?.some(item => item.id === newProjectItem.id)) return section;
+        return { ...section, items: [...(section.items || []), newProjectItem] };
+      }
+      return section;
+    })
+  })),
+});

@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { useSidebar } from "@/providers/sidebar-store-provider"
+// import { useSidebar } from "@/providers/sidebar-store-provider"
+import {useAppStore} from "@/store"
 import {
   Dialog,
   DialogContent,
@@ -23,7 +24,7 @@ export default function AddProjectDialog(){
   const [projectName, setProjectName] = useState<string>('');
   const [projectDescription, setProjectDescription] = useState<string>('');
 
-  const {addProject} = useSidebar(state=>state)
+  const addProject = useAppStore(state=>state.addProject)
   
 
   const handleCreateProject = async() => {

@@ -1,9 +1,10 @@
 import React from "react";
-import { useAuth } from "@/providers/user-auth-store-provider";
+// import { useAuth } from "@/providers/user-auth-store-provider";
+import {useAppStore} from "@/store"
 import type { Subtask } from "@/types";
 
 const SubTaskCard = ({ subtask }: { subtask: Subtask }) => {
-  const { isAdmin } = useAuth((state) => state);
+  const { isAdmin } = useAppStore((state) => state);
 
   const createdBy = subtask.assigner?.name;
 

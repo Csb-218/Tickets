@@ -4,7 +4,8 @@ import * as React from "react"
 import {server} from "@/config/Axios"
 import type {NavItem} from "@/store/sidebarStore"
 import type {Project} from "@/types"
-import { useSidebar } from "@/providers/sidebar-store-provider"
+// import { useSidebar } from "@/providers/sidebar-store-provider"
+import {useAppStore} from "@/store"
 import {
   Frame,
   LifeBuoy,
@@ -67,7 +68,7 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
-  const {navMain,addProject}  = useSidebar((state) => state);
+  const {navMain,addProject}  = useAppStore((state) => state);
   
 
   React.useEffect(()=>{

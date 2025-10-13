@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/sidebar"
 import AddProjectDialog from "@/app/dashboard/team/[project]/components/AddProject"
 import {decodeUrlString} from "@/lib/utils"
+import { RouteGuard } from '@/components/auth/route-guard'
 
 export default function DashBoardLayout({
   children,
@@ -35,6 +36,7 @@ export default function DashBoardLayout({
 
   console.log(pathname,app_url,breadcrumbs,params)
   return (
+    <RouteGuard requireAuth>
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset>
@@ -92,5 +94,6 @@ export default function DashBoardLayout({
           {/* {children} */}
         </SidebarInset>
       </SidebarProvider>
+    </RouteGuard>
   )
 }

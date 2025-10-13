@@ -1,5 +1,4 @@
 import React from "react";
-// import { useAuth } from "@/providers/user-auth-store-provider";
 import {useAppStore} from "@/store"
 import type { Subtask } from "@/types";
 

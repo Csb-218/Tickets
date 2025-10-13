@@ -1,10 +1,7 @@
-export default async function AuthenticationLayout({
+export default function AuthenticationLayout({
   children,
-  params,
 }: {
   children: React.ReactNode
-  params: Promise<{ team: string }>
 }) {
-
-    return <main>{children}</main>
+  return <main>{children}</main>
 }

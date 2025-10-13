@@ -19,7 +19,7 @@ const SubTaskCard = ({ subtask }: { subtask: Subtask }) => {
       <p className="text-sm text-gray-600 py-1 px-2">• {subtask.title}</p>
 
       {/* tag */}
-      {createdBy && (
+      {isAdmin &&createdBy && (
         <div
           className="absolute left-11/12 -bottom-5 -translate-y-1/2 z-10
             flex items-center justify-center

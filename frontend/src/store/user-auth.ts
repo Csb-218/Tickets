@@ -15,9 +15,14 @@ export type AuthActions = {
   verifyOtp: (email: string, otp: string) => Promise<{ error?: string; success?: boolean }>
   checkSession: () => Promise<void>
   logout: () => Promise<void>
+  verifyAdminPassword: (password: string) => Promise<{ success: boolean; error?: string }>
+  toggleAdminMode: (enable: boolean) => void
 }
 
 export type UserAuthStore = AuthState & AuthActions
+
+// Default admin password - in production, this should be configurable or stored securely
+const ADMIN_PASSWORD = 'admin123'
 
 export const defaultInitState: AuthState = {
   isAuthenticated: false,
@@ -138,6 +143,28 @@ export const createAuthSlice: StateCreator<UserAuthStore, [], [], UserAuthStore>
       console.error('Unexpected logout error:', error);
     } finally {
       set({ ...defaultInitState, loading: false });
+    }
+  },
+  
+  verifyAdminPassword: async (password: string) => {
+    // Simple password verification - in production, this should be more secure
+    if (password === ADMIN_PASSWORD) {
+      return { success: true };
+    } else {
+      return { success: false, error: 'Invalid admin password' };
+    }
+  },
+  
+  toggleAdminMode: (enable: boolean) => {
+    set((state) => ({
+      ...state,
+      isAdmin: enable
+    }));
+    
+    if (enable) {
+      console.log('🔓 Admin mode enabled (will be persisted)');
+    } else {
+      console.log('🔒 Admin mode disabled (will be persisted)');
     }
   },
 });

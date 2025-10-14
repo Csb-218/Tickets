@@ -96,6 +96,7 @@ export default function Home() {
                 <li>✨ OTP-based authentication using Supabase</li>
                 <li>🔄 Automatic session management and token refresh</li>
                 <li>🛡️ Protected routes with role-based access</li>
+                <li>👑 Admin mode toggle with password verification</li>
                 <li>📱 Responsive design with Tailwind CSS</li>
                 <li>⚡ Built with Next.js 15 and React 19</li>
               </ul>

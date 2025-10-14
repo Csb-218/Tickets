@@ -47,15 +47,18 @@ const initialNavMain: NavMainSection[] = [
 
 export const createSidebarSlice: StateCreator<SidebarStore, [], [], SidebarStore> = (set) => ({
   navMain: initialNavMain,
-  addProject: (project) => set((state) => ({
-    navMain: state.navMain.map(section => {
-      if (section.title === "Team") {
-        const newProjectItem = { description: project.description, title: project.title, url: `/dashboard/team/${project.title.toLowerCase()}`, id: project.id };
-        // Avoid duplicates
-        if (section.items?.some(item => item.id === newProjectItem.id)) return section;
-        return { ...section, items: [...(section.items || []), newProjectItem] };
-      }
-      return section;
-    })
-  })),
+  addProject: (project) => set((state) => {
+    console.log('💾 Adding project to sidebar (will be persisted):', project.title);
+    return {
+      navMain: state.navMain.map(section => {
+        if (section.title === "Team") {
+          const newProjectItem = { description: project.description, title: project.title, url: `/dashboard/team/${project.title.toLowerCase()}`, id: project.id };
+          // Avoid duplicates
+          if (section.items?.some(item => item.id === newProjectItem.id)) return section;
+          return { ...section, items: [...(section.items || []), newProjectItem] };
+        }
+        return section;
+      })
+    };
+  }),
 });

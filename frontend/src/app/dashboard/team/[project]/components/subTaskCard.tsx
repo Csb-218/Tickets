@@ -1,11 +1,18 @@
+"use client"
 import React from "react";
 import {useAppStore} from "@/store"
+import {useAuthStore} from "@/providers/auth-provider"
 import type { Subtask } from "@/types";
 
 const SubTaskCard = ({ subtask }: { subtask: Subtask }) => {
-  const { isAdmin } = useAppStore((state) => state);
+  // const { isAdmin } = useAppStore((state) => state);
+  const {isAdmin} = useAuthStore((state) => state)
 
   const createdBy = subtask.assigner?.name;
+
+  React.useEffect(()=>{
+    console.log(isAdmin)
+  },[isAdmin])
 
   return (
     <li

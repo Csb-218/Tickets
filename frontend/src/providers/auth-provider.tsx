@@ -54,7 +54,7 @@ function SessionManager({ children }: { children: ReactNode }) {
 
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      async (event:unknown, session:any) => {
         console.log('Auth state change:', event, session?.user?.email)
         
         // Re-check session on any auth state change
